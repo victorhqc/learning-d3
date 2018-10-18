@@ -20,7 +20,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "eslint": "eslint",
+    "lint-staged": "lint-staged"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -32,6 +34,9 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@vx/mock-data": "0.0.179"
+    "@vx/mock-data": "0.0.179",
+    "husky": "^1.1.2",
+    "lint-staged": "^7.3.0",
+    "prettier": "1.14.3"
   }
 }
