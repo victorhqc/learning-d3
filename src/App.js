@@ -42,7 +42,7 @@ class App extends Component {
     this.yScale = null;
 
     this.doMouseMove = this.doMouseMove.bind(this);
-    // this.doMouseLeave = this.doMouseLeave.bind(this);
+    this.doMouseLeave = this.doMouseLeave.bind(this);
   }
 
   componentWillMount() {
@@ -68,39 +68,63 @@ class App extends Component {
     const { showTooltip, margin, width } = this.props;
 
     return event => {
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+      }
+
       const coordinates = localPoint(event.target.ownerSVGElement, event);
 
       const currentIndex =
         ((coordinates.x - margin.left) * data.length) /
         (width - margin.left - margin.right);
+      const currentValue = data[Math.ceil(currentIndex)];
 
-      this.setState(() => ({
-        currentPosition: {
-          x: coordinates.x - margin.left,
-          y: coordinates.y - margin.bottom,
-        },
-        currentValue: data[Math.ceil(currentIndex)],
-      }));
+      showTooltip({
+        tooltipLeft: this.xScale(x(currentValue)),
+        // tooltipLeft: coordinates.x - margin.left,
+        tooltipTop:
+          this.yScale(y(currentValue)) - 30 + margin.bottom + margin.top,
+        // tooltipTop: coordinates.y - margin.bottom,
+        tooltipData: currentValue,
+      });
+      // this.setState(() => ({
+      //   currentPosition: {
+      //     x: coordinates.x - margin.left,
+      //     y: coordinates.y - margin.bottom,
+      //   },
+      //   currentValue: data[Math.ceil(currentIndex)],
+      // }));
     };
   }
 
-  // doMouseLeave(data) {
-  //   const { hideTooltip } = this.props;
-  //
-  //   return event => {
-  //     this.timeout = setTimeout(() => {
-  //       hideTooltip();
-  //     }, 300);
-  //   };
-  // }
+  doMouseLeave(data) {
+    const { hideTooltip } = this.props;
+
+    return event => {
+      this.timeout = setTimeout(() => {
+        hideTooltip();
+      }, 300);
+    };
+  }
 
   render() {
-    const { data, width, height, margin } = this.props;
+    const {
+      data,
+      width,
+      height,
+      margin,
+      tooltipOpen,
+      tooltipTop,
+      tooltipLeft,
+      tooltipData,
+    } = this.props;
     const { dimensions, currentPosition, currentValue } = this.state;
 
     if (!dimensions || !this.xScale || !this.yScale) {
       return null;
     }
+
+    // const markerXposition = this.xScale(x(tooltipData));
 
     return (
       <div className="App">
@@ -134,19 +158,23 @@ class App extends Component {
               // stroke={'url(#gradient'}
               curve={curveNatural}
               onMouseMove={this.doMouseMove}
-              // onMouseLeave={this.doMouseLeave}
+              onMouseLeave={this.doMouseLeave}
             />
-            <Marker
-              from={{ x: currentPosition.x, y: 0 }}
-              to={{ x: currentPosition.x, y: dimensions.yMax }}
+            {/* <Marker
+              from={{ x: markerXposition, y: 0 }}
+              to={{ x: markerXposition, y: dimensions.yMax }}
               stroke={'black'}
-              label={`Closed at: ${y(currentValue)}`}
               labelStroke={'none'}
               labelDx={6}
               labelDy={15}
-            />
+            /> */}
           </Group>
         </svg>
+        {tooltipOpen && (
+          <Tooltip key={Math.random()} top={tooltipTop} left={tooltipLeft}>
+            Closed at <strong>{y(tooltipData)}</strong>
+          </Tooltip>
+        )}
       </div>
     );
   }
@@ -154,6 +182,7 @@ class App extends Component {
 
 App.defaultProps = {
   data: appleStock,
+  tooltipData: {},
   margin: {
     top: 60,
     bottom: 60,
