@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@vx/axis": "0.0.179",
+    "@vx/curve": "0.0.165",
+    "@vx/event": "0.0.179",
+    "@vx/gradient": "0.0.165",
+    "@vx/group": "0.0.170",
+    "@vx/scale": "0.0.179",
+    "@vx/shape": "0.0.179",
+    "@vx/tooltip": "0.0.179",
+    "d3-array": "^1.2.4",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-scripts": "2.0.5"
@@ -21,5 +30,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "@vx/mock-data": "0.0.179"
+  }
 }
